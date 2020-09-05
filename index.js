@@ -1,83 +1,123 @@
 const express = require('express')
+const morgan = require('morgan')
+const { json } = require('express')
+
 const app = express()
 
 app.use(express.json())
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    date: "2020-01-10T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2020-01-10T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2020-01-10T19:20:14.298Z",
-    important: true
-  }
+morgan.token("sendData",req => JSON.stringify(req.body))
+app.use(morgan(":method :url :status :res[content-length] :response-time --  :sendData"))
+
+
+let persons = [
+    {
+        name: "Yousuf ali",
+        number: "0348-3176127",
+        id: 1
+    },
+    {
+        name: "Ada Lovelace",
+        number: "39-44-5323523",
+        id: 2
+    },
+    {
+        name: "ama",
+        number: "12-43-234345",
+        id: 3
+    }
+    
+
 ]
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>')
-})
-
-app.get('/api/notes', (req, res) => {
-  res.json(notes)
-})
-
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => n.id))
-    : 0
-  return maxId + 1
+const unknownEndPoint = (req, res) => {
+    res.status(404).send({ error: "Unknown endpoint" })
 }
 
-app.post('/api/notes', (request, response) => {
-  const body = request.body
+const generateId = () => {
 
-  if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
-  }
+    return Math.floor(Math.random() * 1000)
+}
 
-  const note = {
-    content: body.content,
-    important: body.important || false,
-    date: new Date(),
-    id: generateId(),
-  }
-
-  notes = notes.concat(note)
-
-  response.json(note)
+app.get('/', (req, res) => {
+    res.send('<h1>Phonebook</h1>')
 })
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const note = notes.find(note => note.id === id)
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/persons', (req, res) => {
+    res.json(persons)
+})
+app.get('/api/persons/:id', (req, res) => {
+    // console.log(req.params.id)
+    let contact = persons.find((x) => x.id === Number(req.params.id))
+
+    // console.log(contact)
+    if (!contact) {
+        res.status(404).end()
+    } else {
+        res.json(contact)
+    }
+
+
+
+
 })
 
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
+app.get('/info', (req, res) => {
+    const count = persons.length
+    console.log(count)
+    // let description = `Phonebook has info for ${count} people`
+    // let date = Date()
+    // result = [description,date].join("\n")
 
-  response.status(204).end()
+    let result = `Phonebook has info for ${count} people \n\n${Date()}`
+
+    // res.json(result)
+    res.send(result)
+
 })
 
+app.delete('/api/persons/:id', (req, res) => {
+    console.log(persons, '\n ')
+
+    const id = Number(req.params.id)
+    const contact = persons.find((x) => x.id === id)
+    if (!contact) {
+        res.status(404).end('Id not exist')
+    }
+    else {
+        persons = persons.filter((x) => x.id !== id)
+
+        console.log(persons)
+
+        res.status(204).end()
+    }
+
+})
+
+app.post('/api/persons', (req, res) => {
+
+    if (!req.body.name || !req.body.number) {
+        res.status(404).json("Name or number is missing")
+    }
+
+    const find_name = persons.find((x) => x.name === req.body.name)
+    // console.log("Post_already have person: ", find_name)
+    if (find_name) {
+        res.status(422).json("Use unique name")
+
+    } else {
+        const contact = {
+            name: req.body.name,
+            number: req.body.number || '0000-000',
+            id: generateId()
+        }
+        console.log(contact.id)
+        persons = persons.concat(contact)
+        res.json(contact)
+    }
+
+
+})
+
+app.use(unknownEndPoint)
 const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
