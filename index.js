@@ -5,6 +5,7 @@ const cors = require('cors')
 const app = express()
 
 app.use(cors())
+app.use(express.static('build'))
 morgan.token("mylooger",req=>JSON.stringify(req.body))
 
 app.use(morgan(':method :url :status :response-time :mylooger'))
@@ -37,7 +38,9 @@ let notes = [
 ]
 
 app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>')
+  //res.send('<h1>Hello Yousuf!     base address render</h1>')
+	res.sendFile('index.html')
+	
 })
 
 app.get('/api/notes', (req, res) => {
