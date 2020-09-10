@@ -1,10 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
 const { json } = require('express')
+const cors = require('cors')
+
 
 const app = express()
+app.use(cors())
 
 app.use(express.json())
+app.use(express.static('build'))
 
 morgan.token("sendData",req => JSON.stringify(req.body))
 app.use(morgan(":method :url :status :res[content-length] :response-time --  :sendData"))
@@ -39,7 +43,7 @@ const generateId = () => {
 }
 
 app.get('/', (req, res) => {
-    res.send('<h1>Phonebook</h1>')
+    res.sendFile('index.html')
 })
 
 app.get('/api/persons', (req, res) => {
@@ -119,5 +123,5 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.use(unknownEndPoint)
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
