@@ -1,0 +1,8 @@
+Put http://localhost:3001/api/notes/5f5f51409d2e203957e74a87
+Content-Type: application/json
+
+{
+    "content": "University is open go there",
+    "important": true
+
+}
