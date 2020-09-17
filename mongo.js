@@ -15,21 +15,21 @@ if (process.argv.length < 5) {
         const password = process.argv[2]
         const url = `mongodb+srv://fsdev:${password}@cluster0.n829h.mongodb.net/Phonebook-app?retryWrites=true&w=majority`
         mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-        console.log("Phonebook:")
-        Contact.find({}).then(res => { 
+        console.log('Phonebook:')
+        Contact.find({}).then(res => {
             res.forEach(contant => {
                 console.log(contant.name, contant.number)
-            }) 
+            })
 
             mongoose.connection.close()
 
         })
 
-        
+
 
 
     } else {
-        console.log("Please provide proper arguments, node mongo.js password name number")
+        console.log('Please provide proper arguments, node mongo.js password name number')
         process.exit(1)
     }
 
