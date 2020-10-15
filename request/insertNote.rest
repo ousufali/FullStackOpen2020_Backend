@@ -1,8 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im91c3VmYWxpIiwiaWQiOiI1Zjg3NDQyOGViNGRjYzM0ZDc1YWNkMmUiLCJpYXQiOjE2MDI3NjM0MjF9.fL-dz7tFY_C5-llU38q5jdzgFcoTxFVHxoybM1YqYCI
 
 {
-    "content" : "i am your boss",
-    "importance": true,
-    "userId" : "5f874428eb4dcc34d75acd2e"
+    "content" : "temo is good example",
+    "importance": true
 }
